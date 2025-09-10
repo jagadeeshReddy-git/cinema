@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinema Booking</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: white; /* changed from black */
+      color: black;
+      overflow: hidden;
+    }
+
+    /* ====== Background spotlight animation ====== */
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #fff 0%, #e0e0e0 80%);
+      overflow: hidden;
+      z-index: -2;
+    }
+
+    .light {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: moveLight 12s infinite linear;
+      filter: blur(100px);
+    }
+    .light:nth-child(2) {
+      background: radial-gradient(circle, rgba(255, 0, 0, 0.3) 0%, transparent 70%);
+      animation-duration: 15s;
+    }
+    .light:nth-child(3) {
+      background: radial-gradient(circle, rgba(0, 150, 255, 0.3) 0%, transparent 70%);
+      animation-duration: 20s;
+    }
+
+    @keyframes moveLight {
+      0%   { transform: translate(-20%, -20%); }
+      50%  { transform: translate(40%, 40%); }
+      100% { transform: translate(-20%, -20%); }
+    }
+
+    /* ====== Star particles ====== */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: black;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 3s infinite ease-in-out alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.2; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1.5); }
+    }
+
+    /* ====== Spark falling animation ====== */
+    .spark {
+      position: absolute;
+      top: -10px;
+      width: 4px;
+      height: 12px;
+      background: gold;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: fall linear forwards;
+      filter: drop-shadow(0 0 6px gold);
+    }
+
+    @keyframes fall {
+      0%   { transform: translateY(0) scale(0.6); opacity: 1; }
+      80%  { opacity: 1; }
+      100% { transform: translateY(110vh) scale(1); opacity: 0; }
+    }
+
+    /* ====== Landing Page ====== */
+    #landing {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      opacity: 1; /* no fade in delay needed */
+      z-index: 1;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 4rem;
+      color: rgb(0, 0, 0);
+      letter-spacing: 4px;
+       font-family: 'Cinzel', serif;
+      display: flex;
+      gap: 6px;
+    }
+
+    h1 span {
+      display: inline-block;
+    }
+
+    p {
+      margin-top: 20px;
+      font-size: 1.3rem;
+      color: #333;
+    }
+
+    button {
+      margin-top: 40px;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: black;
+      background: gold;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+    }
+
+    button:hover {
+      background: orange;
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(255, 165, 0, 0.9);
+    }
+
+    /* ====== Flying ticket animation ====== */
+    .ticket {
+      position: absolute;
+      width: 80px;
+      height: 40px;
+      background: linear-gradient(135deg, gold, orange);
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+      color: black;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(0deg);
+      opacity: 0.9;
+      animation: flyTicket linear forwards;
+    }
+
+    @keyframes flyTicket {
+      0% { transform: translateY(0) rotate(0deg) scale(0.6); opacity: 1; }
+      50% { transform: translateY(30vh) rotate(180deg) scale(1); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg) scale(0.5); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Lights -->
+  <div class="background">
+    <div class="light"></div>
+    <div class="light"></div>
+    <div class="light"></div>
+  </div>
+
+  <!-- Starfield -->
+  <div id="stars"></div>
+
+  <!-- Spark container -->
+  <div id="sparks"></div>
+
+  <!-- Ticket container -->
+  <div id="tickets"></div>
+
+  <!-- Landing Page -->
+  <div id="landing">
+    <h1 id="title"> 
+      CINEMA HUB
+    </h1>
+    <p>Book your tickets in seconds!</p>
+    <button onclick="enterSite()">Enter 🎟️</button>
+  </div>
+
+  <script>
+    function enterSite() {
+      window.location.href = "cinema.html";
+    }
+
+    // Generate stars
+    const starContainer = document.getElementById("stars");
+    for (let i = 0; i < 60; i++) {
+      const star = document.createElement("div");
+      star.classList.add("star");
+      star.style.top = Math.random() * window.innerHeight + "px";
+      star.style.left = Math.random() * window.innerWidth + "px";
+      star.style.animationDuration = (2 + Math.random() * 3) + "s";
+      starContainer.appendChild(star);
+    }
+
+    // Generate falling sparks
+    const sparkContainer = document.getElementById("sparks");
+    function createSpark() {
+      const spark = document.createElement("div");
+      spark.classList.add("spark");
+      spark.style.left = Math.random() * window.innerWidth + "px";
+      spark.style.width = Math.random() * 3 + 2 + "px";
+      spark.style.height = Math.random() * 15 + 8 + "px";
+      spark.style.animationDuration = (3 + Math.random() * 3) + "s";
+      sparkContainer.appendChild(spark);
+      setTimeout(() => { spark.remove(); }, 6000);
+    }
+    setInterval(createSpark, 150);
+
+    // Generate flying tickets
+    const ticketContainer = document.getElementById("tickets");
+    function createTicket() {
+      const ticket = document.createElement("div");
+      ticket.classList.add("ticket");
+      ticket.textContent = "🎟️";
+      ticket.style.left = Math.random() * window.innerWidth + "px";
+      ticket.style.animationDuration = (3 + Math.random() * 3) + "s";
+      ticketContainer.appendChild(ticket);
+      setTimeout(() => ticket.remove(), 6000);
+    }
+    setInterval(createTicket, 800);
+  </script>
+
+</body>
+</html>
