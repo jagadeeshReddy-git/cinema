@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinema Home</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #111;
+      color: #fff;
+    }
+    header {
+      background: #e50914;
+      padding: 20px;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .movie-card {
+      background: #222;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      transition: transform 0.3s;
+    }
+    .movie-card:hover {
+      transform: scale(1.05);
+    }
+    .movie-card img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+    .movie-info {
+      padding: 15px;
+    }
+    .movie-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .rating {
+      color: gold;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>🎬 Cinema Hub</header>
+  
+  <div class="container" id="movieContainer">
+    <!-- Movies will be inserted here -->
+  </div>
+
+  <script>
+    // Movie data
+    const movies = [
+        { name: "the-bengal-Files", year: "5/09/2025", rating: 8.8, duration: "200m", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH0Zvo3_D9OSitAwHcJdiil2nQsDwEehH7RQ&s", trailerId:"3MfsZFAeNO8", desc: "The Bengal Files unravels the untold stories of political turmoil and human struggle, set against the backdrop of West Bengal." },
+        { name: "The Dark Knight", year: "18/07/2008", rating: 9.0, duration: "152m", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", trailerId:"TQfATDZY5Y4",  desc: "Batman must face his greatest psychological and physical tests as he battles the Joker, a criminal mastermind bent on chaos." },
+        { name: "Interstellar", year: "7/11/2014", rating: 8.6, duration: "169m", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxxHeazeIZwjfJS9ubOvZFyByz4Bqu_-80kQ&s", trailerId:"zSWdZVtXT7E", desc: "A team of explorers travels through a wormhole in space, searching for a new home for humanity. A breathtaking journey of science, sacrifice, and love beyond dimensions." },
+        { name: "Avengers: Endgame", year: "26/04/2019", rating: 8.4, duration: "181m", poster: "https://m.media-amazon.com/images/I/81ExhpBEbHL._AC_SY679_.jpg", trailerId:"wLx8Jzge0", desc: "The Avengers assemble one last time to undo the damage caused by Thanos. A monumental battle that defines courage, unity, and sacrifice." },
+        { name: "Joker", year: "2/10/2019", rating: 8.5, duration: "122m", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZNIQu1YCoJTV2TgWCqWob9REs_T8ByMYgFw&s", trailerId:"1PzwFCj14gg", desc: "A failed comedian descends into madness and becomes the infamous Gotham villain. A chilling exploration of society, identity, and chaos."  },
+        { name: "coolie", year: "14/08/2025", rating: 8.0, duration: "170m", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlW3tkP3aQbb3X1ii3Yrdyed5CkNpNUR6SYA&s", trailerId:"l8qlUDRSaTU", desc: "A railway coolie fights against injustice and corruption while protecting the weak. Packed with action, comedy, and emotion." },
+        { name: "war 2", year: "14/08/2025", rating: 8.2, duration: "170m", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0CFMvC2OP8HNibq0FtDk40gZtD5Pv3UpZiw&s" , trailerId:"CllWVGWhOEs", desc: "An epic showdown unfolds as spies and soldiers collide in a battle of loyalty and betrayal. High-octane action with global stakes."},
+        { name: "Mahavatar Narasimha", year: "25/07/2025", duration: "130m", rating: 9.8, poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfjEK17XFlbdMv_xGsM5zBkDRVwIFZpUGhJw&s", trailerId:"VkLl95kA9jk", desc: "A mythological saga depicting the fierce incarnation of Lord Vishnu as Narasimha. A divine tale of justice, devotion, and destruction of evil."},
+        { name: "mirai", rating: 9.0, year: "12/09/2025", duration: "170m", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgrezCBs6ET7s28qhy93sQnRd2T7Dt-4QZPXALzLlKEde-ngU9xDj3TXtVp-TYvLDnKmQ&usqp=CAU", trailerId:"ggJg6CcKtZE", desc: "A young boy meets his future sister, Mirai, who guides him through magical adventures. A heartfelt journey of family, growth, and imagination." },
+        { name: "OG", rating: 9.2, year: "25/09/2025", duration: "180m", poster: "https://admin.vizzve.com/api/uploads/post_images/1750755103480-328239353-pawan-kalyan-og-movie-release-2025-vizzve-finance.png", trailerId:"ePOglweqy7o", desc: "A ruthless gangster returns to reclaim his throne in a world of crime. Action, power, and legacy collide in this gripping drama." },
+        { name: "param sundari", year: "29/08/2025", duration: "136m", rating: 8.0, poster: "https://static.toiimg.com/photo/msid-118501914/118501914.jpg?141972", trailerId:"fdWnfzsx-ks", desc: "A dazzling and energetic performance that celebrates beauty and confidence. A musical delight that captures hearts instantly."},
+        { name: "kotha Lokah", year: "1/09/2025", duration: "154m", rating: 9.3, poster: "https://www.greatandhra.com/newphotos10/kotha-lokah11756690197.jpg", trailerId:"Gzi7AgztLsM", desc: "A tale rooted in tradition and emotion, blending love and struggle in a changing world. A cinematic glimpse into the soul of a new land." },
+        
+      ];
+
+    const container = document.getElementById("movieContainer");
+
+    // Render movie cards
+    movies.forEach(movie => {
+      const card = document.createElement("div");
+      card.className = "movie-card";
+      card.innerHTML = `
+        <img src="${movie.poster}" alt="${movie.name}">
+        <div class="movie-info">
+          <h3>${movie.name}</h3>
+          <p>⭐ ${movie.rating}</p>
+        </div>
+      `;
+      // make the card clickable → go to movie.html
+      card.addEventListener("click", () => {
+         const url = `index.html?name=${encodeURIComponent(movie.name)}&year=${movie.year}&rating=${movie.rating}&duration=${movie.duration}&poster=${movie.poster}&trailerId=${movie.trailerId}&desc=${encodeURIComponent(movie.desc)}`;
+         window.location.href = url;
+      });
+      container.appendChild(card);
+    })
+  </script>
+</body>
+</html>

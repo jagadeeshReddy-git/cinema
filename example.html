@@ -1,0 +1,29 @@
+
+const movies = [
+  { 
+    name: "the-bengal-Files", 
+    rating: 8.8, 
+    poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_4tA8lRWOVjO8cN4DQWTAS9qVf8AJDOdHpg&s" 
+  }
+];
+
+const container = document.getElementById("movies-container");
+
+movies.forEach(movie => {
+  const card = document.createElement("div");
+  card.className = "movie-card";
+
+  card.innerHTML = `
+    <a href="movie.html?name=${encodeURIComponent(movie.name)}">
+      <img src="${movie.poster}" alt="${movie.name}">
+    </a>
+    <div class="movie-info">
+      <h3>${movie.name}</h3>
+      <p>⭐ ${movie.rating}</p>
+    </div>
+  `;
+
+  container.appendChild(card);
+});
+
+
