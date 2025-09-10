@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Booking Confirmed</title>
+  <link rel="icon" type="image/png" href="logo.png">
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0ea5a4, #115e59);
+      background: linear-gradient(135deg, #b5eaea, #ffffff);
       color: white;
       text-align: center;
       height: 100vh;
@@ -31,6 +32,20 @@
       font-size: 50px;
       margin: 15px 0;
     }
+    #viewTicketBtn {
+      margin-top: 12px;
+      padding: 10px 20px;
+      background: #d32f2f;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+    #viewTicketBtn:hover {
+      background: #b71c1c;
+    }
   </style>
 </head>
 <body>
@@ -38,6 +53,20 @@
     <div class="emoji">🎉🎬🍿</div>
     <h1>Your Seat Booking is Confirmed!</h1>
     <p>Enjoy the movie 🎥✨</p>
+    <button id="viewTicketBtn">View Ticket</button>
   </div>
+
+  
+  <script>
+    document.getElementById("viewTicketBtn").addEventListener("click", () => {
+      // simply redirect to ticket page
+      window.location.href = "recipt.html";
+    });
+    
+
+    
+  </script>
+
+  
 </body>
 </html>
