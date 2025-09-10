@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CinemaX — Booking Receipt</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <link rel="icon" type="image/png" href="logo.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+     background: linear-gradient(135deg, #b5eaea, #ffffff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .ticket {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      width: 380px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px dashed #e2e8f0;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0ea5a4;
+    }
+    .movie {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 8px 0 4px;
+    }
+    .meta {
+      font-size: 14px;
+      color: #64748b;
+    }
+    .details {
+      margin: 14px 0;
+      font-size: 15px;
+    }
+    .details strong {
+      color: #0f172a;
+    }
+    .qr {
+      text-align: center;
+      margin-top: 16px;
+    }
+    #qr {
+      width: 130px;
+      height: 130px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 12px;
+      color: #94a3b8;
+      border-top: 2px dashed #e2e8f0;
+      padding-top: 10px;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="ticket">
+    <div class="header">
+      <div class="logo">🎬 Cinema Hub</div>
+      <div class="ref" id="ref">Ref: #12345</div>
+    </div>
+    <div class="movie" id="movieName">Movie Title</div>
+    <div class="meta" id="movieYear">Year</div>
+
+    <div class="details">
+      <p><strong>Showtime:</strong> <span id="showtime">6:45 PM</span></p>
+      <p><strong>Seats:</strong> <span id="seats">A1, A2</span></p>
+      <p><strong>Duration:</strong> <span id="duration">148m</span></p>
+      <p><strong>Rating:</strong> <span id="rating">8.8/10</span></p>
+    </div>
+
+    <div class="qr">
+      <canvas id="qr"></canvas>
+    </div>
+
+    <div class="footer">
+      Please arrive 15 minutes before showtime.  
+      Entry allowed only with valid QR code.  
+    </div>
+  </div>
+
+  <script>
+    // Read booking data from URL params
+    const params = new URLSearchParams(window.location.search);
+
+    const movieName = params.get("name") || "Unknown Movie";
+    const movieYear = params.get("year") || "";
+    const seats = params.get("seats") || "Not Selected";
+    const showtime = params.get("showtime") || "N/A";
+    const duration = params.get("duration") || "N/A";
+    const rating = params.get("rating") || "N/A";
+    const ref = "CX" + Math.floor(Math.random()*1000000);
+
+    // Fill receipt
+    document.getElementById("movieName").textContent = movieName;
+    document.getElementById("movieYear").textContent = movieYear;
+    document.getElementById("seats").textContent = seats;
+    document.getElementById("showtime").textContent = showtime;
+    document.getElementById("duration").textContent = duration;
+    document.getElementById("rating").textContent = rating;
+    document.getElementById("ref").textContent = "Ref: #" + ref;
+
+    // Generate QR code with booking details
+    const qr = new QRious({
+      element: document.getElementById("qr"),
+      size: 130,
+      value: `CinemaX Ticket\nRef: ${ref}\nMovie: ${movieName} (${movieYear})\nSeats: ${seats}\nShowtime: ${showtime}`
+    });
+  </script>
+  <script>
+  // Get booking data from localStorage
+  const bookingData = JSON.parse(localStorage.getItem("bookingData"));
+
+  if (bookingData) {
+    const { name, year, seats, showtime, duration, rating } = bookingData;
+    const ref = "CX" + Math.floor(Math.random() * 1000000);
+
+    // Fill receipt
+    document.getElementById("movieName").textContent = name;
+    document.getElementById("movieYear").textContent = year;
+    document.getElementById("seats").textContent = seats.join(", ");
+    document.getElementById("showtime").textContent = showtime;
+    document.getElementById("duration").textContent = duration;
+    document.getElementById("rating").textContent = rating;
+    document.getElementById("ref").textContent = "Ref: #" + ref;
+
+    // Generate QR code
+    new QRious({
+      element: document.getElementById("qr"),
+      size: 130,
+      value: `CinemaX Ticket\nRef: ${ref}\nMovie: ${name} (${year})\nSeats: ${seats.join(", ")}\nShowtime: ${showtime}`
+    });
+  } else {
+    alert("No booking details found!");
+  }
+</script>
+
+</body>
+</html>
