@@ -8,7 +8,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-     background: linear-gradient(135deg, #b5eaea, #ffffff);
+      background: linear-gradient(135deg, #b5eaea, #ffffff);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -36,30 +36,12 @@
       font-weight: 700;
       color: #0ea5a4;
     }
-    .movie {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 8px 0 4px;
-    }
-    .meta {
-      font-size: 14px;
-      color: #64748b;
-    }
-    .details {
-      margin: 14px 0;
-      font-size: 15px;
-    }
-    .details strong {
-      color: #0f172a;
-    }
-    .qr {
-      text-align: center;
-      margin-top: 16px;
-    }
-    #qr {
-      width: 130px;
-      height: 130px;
-    }
+    .movie { font-size: 18px; font-weight: bold; margin: 8px 0 4px; }
+    .meta { font-size: 14px; color: #64748b; }
+    .details { margin: 14px 0; font-size: 15px; }
+    .details strong { color: #0f172a; }
+    .qr { text-align: center; margin-top: 16px; }
+    #qr { width: 130px; height: 130px; }
     .footer {
       text-align: center;
       margin-top: 14px;
@@ -68,11 +50,24 @@
       border-top: 2px dashed #e2e8f0;
       padding-top: 10px;
     }
-    
+    .print-btn {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px 20px;
+      background: #0ea5a4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .print-btn:hover {
+      background: #0c8c89;
+    }
   </style>
 </head>
 <body>
-  <div class="ticket">
+  <div class="ticket" id="receipt">
     <div class="header">
       <div class="logo">🎬 Cinema Hub</div>
       <div class="ref" id="ref">Ref: #12345</div>
@@ -81,10 +76,10 @@
     <div class="meta" id="movieYear">Year</div>
 
     <div class="details">
-      <p><strong>Showtime:</strong> <span id="showtime">6:45 PM</span></p>
-      <p><strong>Seats:</strong> <span id="seats">A1, A2</span></p>
-      <p><strong>Duration:</strong> <span id="duration">148m</span></p>
-      <p><strong>Rating:</strong> <span id="rating">8.8/10</span></p>
+      <p><strong>Showtime:</strong> <span id="showtime"></span></p>
+      <p><strong>Seats:</strong> <span id="seats"></span></p>
+      <p><strong>Duration:</strong> <span id="duration"></span></p>
+      <p><strong>Rating:</strong> <span id="rating"></span></p>
     </div>
 
     <div class="qr">
@@ -92,66 +87,51 @@
     </div>
 
     <div class="footer">
-      Please arrive 15 minutes before showtime.  
-      Entry allowed only with valid QR code.  
+      Please arrive 15 minutes before showtime.<br>
+      Entry allowed only with valid QR code.
     </div>
   </div>
 
+  <!-- Print Button -->
+  <button class="print-btn" onclick="printReceipt()">🖨️ Print Receipt</button>
+
   <script>
-    // Read booking data from URL params
-    const params = new URLSearchParams(window.location.search);
+    // Get booking data from localStorage
+    const bookingData = JSON.parse(localStorage.getItem("bookingData"));
 
-    const movieName = params.get("name") || "Unknown Movie";
-    const movieYear = params.get("year") || "";
-    const seats = params.get("seats") || "Not Selected";
-    const showtime = params.get("showtime") || "N/A";
-    const duration = params.get("duration") || "N/A";
-    const rating = params.get("rating") || "N/A";
-    const ref = "CX" + Math.floor(Math.random()*1000000);
+    if (bookingData) {
+      const { name, year, seats, showtime, duration, rating } = bookingData;
+      const ref = "CX" + Math.floor(Math.random() * 1000000);
 
-    // Fill receipt
-    document.getElementById("movieName").textContent = movieName;
-    document.getElementById("movieYear").textContent = movieYear;
-    document.getElementById("seats").textContent = seats;
-    document.getElementById("showtime").textContent = showtime;
-    document.getElementById("duration").textContent = duration;
-    document.getElementById("rating").textContent = rating;
-    document.getElementById("ref").textContent = "Ref: #" + ref;
+      // Fill receipt
+      document.getElementById("movieName").textContent = name;
+      document.getElementById("movieYear").textContent = year;
+      document.getElementById("seats").textContent = Array.isArray(seats) ? seats.join(", ") : seats;
+      document.getElementById("showtime").textContent = showtime;
+      document.getElementById("duration").textContent = duration;
+      document.getElementById("rating").textContent = rating;
+      document.getElementById("ref").textContent = "Ref: #" + ref;
 
-    // Generate QR code with booking details
-    const qr = new QRious({
-      element: document.getElementById("qr"),
-      size: 130,
-      value: `CinemaX Ticket\nRef: ${ref}\nMovie: ${movieName} (${movieYear})\nSeats: ${seats}\nShowtime: ${showtime}`
-    });
+      // Generate QR code
+      new QRious({
+        element: document.getElementById("qr"),
+        size: 130,
+        value: `CinemaX Ticket
+Ref: ${ref}
+Movie: ${name} (${year})
+Seats: ${Array.isArray(seats) ? seats.join(", ") : seats}
+Showtime: ${showtime}
+Duration: ${duration}
+Rating: ${rating}`
+      });
+    } else {
+      alert("No booking details found!");
+    }
+
+    // Print Function
+    function printReceipt() {
+      window.print();
+    }
   </script>
-  <script>
-  // Get booking data from localStorage
-  const bookingData = JSON.parse(localStorage.getItem("bookingData"));
-
-  if (bookingData) {
-    const { name, year, seats, showtime, duration, rating } = bookingData;
-    const ref = "CX" + Math.floor(Math.random() * 1000000);
-
-    // Fill receipt
-    document.getElementById("movieName").textContent = name;
-    document.getElementById("movieYear").textContent = year;
-    document.getElementById("seats").textContent = seats.join(", ");
-    document.getElementById("showtime").textContent = showtime;
-    document.getElementById("duration").textContent = duration;
-    document.getElementById("rating").textContent = rating;
-    document.getElementById("ref").textContent = "Ref: #" + ref;
-
-    // Generate QR code
-    new QRious({
-      element: document.getElementById("qr"),
-      size: 130,
-      value: `CinemaX Ticket\nRef: ${ref}\nMovie: ${name} (${year})\nSeats: ${seats.join(", ")}\nShowtime: ${showtime}`
-    });
-  } else {
-    alert("No booking details found!");
-  }
-</script>
-
 </body>
 </html>
