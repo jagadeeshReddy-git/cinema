@@ -17,10 +17,10 @@
     }
     .ticket {
       background: #fff;
-      border-radius: 16px;
-      padding: 24px;
-      width: 380px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      border-radius: 12px;
+      padding: 16px;
+      width: 280px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
       position: relative;
     }
     .header {
@@ -28,41 +28,46 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 2px dashed #e2e8f0;
-      padding-bottom: 12px;
-      margin-bottom: 12px;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
     }
     .logo {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 700;
       color: #0ea5a4;
     }
-    .movie { font-size: 18px; font-weight: bold; margin: 8px 0 4px; }
-    .meta { font-size: 14px; color: #64748b; }
-    .details { margin: 14px 0; font-size: 15px; }
+    .movie { font-size: 16px; font-weight: bold; margin: 6px 0 3px; }
+    .meta { font-size: 12px; color: #64748b; }
+    .details { margin: 10px 0; font-size: 13px; }
     .details strong { color: #0f172a; }
-    .qr { text-align: center; margin-top: 16px; }
-    #qr { width: 130px; height: 130px; }
+    .qr { text-align: center; margin-top: 10px; }
+    #qr { width: 140px; height: 140px; }  /* 🔹 Bigger QR */
     .footer {
       text-align: center;
-      margin-top: 14px;
-      font-size: 12px;
+      margin-top: 10px;
+      font-size: 10px;
       color: #94a3b8;
       border-top: 2px dashed #e2e8f0;
-      padding-top: 10px;
+      padding-top: 8px;
     }
-    .print-btn {
+    .btn {
       display: block;
-      margin: 20px auto 0;
-      padding: 10px 20px;
+      margin: 8px auto 0;
+      padding: 6px 14px;
       background: #0ea5a4;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 12px;
     }
-    .print-btn:hover {
+    .btn:hover {
       background: #0c8c89;
+    }
+    img#moviePoster {
+      width: 90px;
+      border-radius: 6px;
+      box-shadow:0 3px 8px rgba(0,0,0,0.2);
     }
   </style>
 </head>
@@ -72,6 +77,12 @@
       <div class="logo">🎬 Cinema Hub</div>
       <div class="ref" id="ref">Ref: #12345</div>
     </div>
+
+    <!-- Movie Poster -->
+    <div style="text-align:center; margin-bottom:10px;">
+      <img id="moviePoster" src="" alt="Movie Poster">
+    </div>
+
     <div class="movie" id="movieName">Movie Title</div>
     <div class="meta" id="movieYear">Year</div>
 
@@ -89,18 +100,17 @@
     <div class="footer">
       Please arrive 15 minutes before showtime.<br>
       Entry allowed only with valid QR code.
+      <button class="btn" onclick="printReceipt()">🖨️ Print Receipt</button>
+      <button class="btn" onclick="downloadQR()">⬇️ Download Ticket</button>
     </div>
   </div>
-
-  <!-- Print Button -->
-  <button class="print-btn" onclick="printReceipt()">🖨️ Print Receipt</button>
 
   <script>
     // Get booking data from localStorage
     const bookingData = JSON.parse(localStorage.getItem("bookingData"));
 
     if (bookingData) {
-      const { name, year, seats, showtime, duration, rating } = bookingData;
+      const { name, year, seats, showtime, duration, rating, poster } = bookingData;
       const ref = "CX" + Math.floor(Math.random() * 1000000);
 
       // Fill receipt
@@ -111,18 +121,16 @@
       document.getElementById("duration").textContent = duration;
       document.getElementById("rating").textContent = rating;
       document.getElementById("ref").textContent = "Ref: #" + ref;
+      document.getElementById("moviePoster").src = poster;
 
-      // Generate QR code
+      // Create URL with ticket data
+      const ticketUrl = `${window.location.origin}${window.location.pathname}?ref=${ref}&name=${encodeURIComponent(name)}&year=${year}&seats=${encodeURIComponent(Array.isArray(seats) ? seats.join(", ") : seats)}&showtime=${encodeURIComponent(showtime)}&duration=${encodeURIComponent(duration)}&rating=${encodeURIComponent(rating)}`;
+
+      // Generate QR code with URL
       new QRious({
         element: document.getElementById("qr"),
-        size: 130,
-        value: `CinemaX Ticket
-Ref: ${ref}
-Movie: ${name} (${year})
-Seats: ${Array.isArray(seats) ? seats.join(", ") : seats}
-Showtime: ${showtime}
-Duration: ${duration}
-Rating: ${rating}`
+        size: 140,
+        value: ticketUrl
       });
     } else {
       alert("No booking details found!");
@@ -131,6 +139,27 @@ Rating: ${rating}`
     // Print Function
     function printReceipt() {
       window.print();
+    }
+
+    // Download QR Function
+    function downloadQR() {
+      const canvas = document.getElementById("qr");
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "CinemaX_Ticket_QR.png";
+      link.click();
+    }
+
+    // 🔹 If opened from QR scan (URL params), show ticket data
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("name")) {
+      document.getElementById("movieName").textContent = params.get("name");
+      document.getElementById("movieYear").textContent = params.get("year");
+      document.getElementById("seats").textContent = params.get("seats");
+      document.getElementById("showtime").textContent = params.get("showtime");
+      document.getElementById("duration").textContent = params.get("duration");
+      document.getElementById("rating").textContent = params.get("rating");
+      document.getElementById("ref").textContent = "Ref: #" + params.get("ref");
     }
   </script>
 </body>
