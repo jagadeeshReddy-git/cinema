@@ -417,6 +417,21 @@
   if (movie.trailerId) {
     document.querySelector(".trailer iframe").src = `https://www.youtube.com/embed/${movie.trailerId}?rel=0&modestbranding=1&autoplay=0`;
   }
+  const showtimeButtons = document.querySelectorAll(".showtimes button");
+    const seatInputs = document.querySelectorAll(".seat-input");
+
+    showtimeButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        // Remove active from all
+        showtimeButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        // Reset seat selections (booked remain booked)
+        seatInputs.forEach(seat => {
+          if (!seat.disabled) seat.checked = false;
+        });
+      });
+    });
   
   document.getElementById("payBtn").addEventListener("click", function () {
   // Get all selected seats
@@ -430,7 +445,11 @@
   // ✅ If seats are selected, continue to payment page
   window.location.href = "payment.html";
 });
-
+ document.getElementById("resetBtn").addEventListener("click", () => {
+      seatInputs.forEach(seat => {
+        if (!seat.disabled) seat.checked = false;
+      });
+    });
   
 </script>
 
