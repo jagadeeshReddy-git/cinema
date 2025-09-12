@@ -26,6 +26,7 @@
       margin: 8px 0;
       border: 1px solid #ccc;
       border-radius: 6px;
+      box-sizing: border-box;
     }
     button {
       background: #0ea5a4;
@@ -35,43 +36,66 @@
       border: none;
     }
     button:hover { background: #028a85; }
+
+    /* small helper for readonly fields */
+    input[readonly] {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    /* red star for required fields */
+    .required::after {
+      content: " *";
+      color: red;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <div class="box">
     <h2>Payment</h2>
-   <form action="confirmatin.html" onsubmit="return validateForm()" novalidate>
-  <label>Name on Card</label>
-  <input type="text" id="name" placeholder="Enter name" required>
+    <form action="confirmatin.html" onsubmit="return validateForm()" novalidate>
+      <label class="required">Credit Number</label>
+      <input type="text" id="credit" placeholder="Enter credit" required>
 
-  <label>Card Number</label>
-  <input type="text" id="card" placeholder="xxxx xxxx xxxx xxxx" required>
+      <label class="required">Pin</label>
+      <input type="password" id="pin" placeholder="Enter 6-digit pin" maxlength="6" required>
 
-  <label>Expiry</label>
-  <input type="text" id="expiry" placeholder="MM/YY" required>
+      <label>Date & Time</label>
+      <input type="text" id="datetime" readonly>
 
-  <label>CVV</label>
-  <input type="password" id="cvv" placeholder="123" required>
+      <button type="submit">Pay Now</button>
+    </form>
 
-  <button type="submit">Pay Now</button>
-</form>
+    <script>
+      // Fill date & time with the laptop's current date/time on load
+      function updateDateTime() {
+        const now = new Date();
+        const localString = now.toLocaleString();
+        document.getElementById("datetime").value = localString;
+      }
 
-<script>
-function validateForm() {
-  const name = document.getElementById("name").value.trim();
-  const card = document.getElementById("card").value.trim();
-  const expiry = document.getElementById("expiry").value.trim();
-  const cvv = document.getElementById("cvv").value.trim();
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
 
-  if (!name || !card || !expiry || !cvv) {
-    alert("All fields are required. Please fill them before proceeding.");
-    return false; // prevent going to confirmation.html
-  }
-  return true; // allow redirect
-}
+      function validateForm() {
+        const credit = document.getElementById("credit").value.trim();
+        const pin = document.getElementById("pin").value.trim();
 
-</script>
+        if (!credit) {
+          alert("Credit is required. Please enter it before proceeding.");
+          return false;
+        }
 
+        const pinRegex = /^\d{6}$/;
+        if (!pinRegex.test(pin)) {
+          alert("PIN must be exactly 6 digits (numbers only).");
+          return false;
+        }
+
+        return true;
+      }
+    </script>
   </div>
 </body>
 </html>
