@@ -3,178 +3,235 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cinema Entrance</title>
+  <title>Cinema Booking</title>
+  <link rel="icon" type="image/png" href="logo.png">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body, html {
-      height: 100%;
-      font-family: 'Poppins', sans-serif;
-      background: #000;
+    body {
+      font-family: Arial, sans-serif;
+      background: white; /* changed from black */
+      color: black;
       overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
-    /* Background rotating light */
-    body::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.06) 10%, transparent 60%);
-      animation: rotateBg 25s linear infinite;
-    }
-
-    @keyframes rotateBg {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Searchlight beams */
-    .beam {
-      position: absolute;
-      width: 500px;
-      height: 200%;
-      top: -50%;
-      background: linear-gradient(transparent, rgba(255,255,180,0.18), transparent);
-      filter: blur(40px);
-      animation: sweep 7s ease-in-out infinite;
-      transform-origin: center bottom;
-    }
-
-    .beam:nth-child(1) { left: 15%; animation-delay: 0s; }
-    .beam:nth-child(2) { left: 50%; animation-delay: 2s; }
-    .beam:nth-child(3) { left: 80%; animation-delay: 4s; }
-
-    @keyframes sweep {
-      0% { transform: rotate(-20deg); }
-      50% { transform: rotate(20deg); }
-      100% { transform: rotate(-20deg); }
-    }
-
-    /* Cinema Title */
-    h1 {
-      font-size: 4.5em;
-      color: #ffcc00;
-      text-transform: uppercase;
-      letter-spacing: 6px;
-      text-shadow: 0 0 20px #ffcc00, 0 0 40px #ff6600, 0 0 70px #ff3300;
-      animation: flicker 3s infinite, glowPulse 2s ease-in-out infinite;
-      position: relative;
-      z-index: 5;
-      text-align: center;
-    }
-
-    @keyframes flicker {
-      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-      20%, 24%, 55% { opacity: 0.5; }
-    }
-
-    @keyframes glowPulse {
-      0%, 100% { text-shadow: 0 0 20px #ffcc00, 0 0 40px #ff6600, 0 0 70px #ff3300; }
-      50% { text-shadow: 0 0 30px #ffee66, 0 0 60px #ff9933, 0 0 100px #ff6600; }
-    }
-
-    /* Button */
-    .enter-btn {
-      margin-top: 30px;
-      padding: 15px 50px;
-      font-size: 1.3em;
-      color: white;
-      background: transparent;
-      border: 3px solid #ffcc00;
-      border-radius: 50px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: 0.3s;
-      position: relative;
-      overflow: hidden;
-      z-index: 5;
-    }
-
-    .enter-btn::before {
-      content: "";
-      position: absolute;
+    /* ====== Background spotlight animation ====== */
+    .background {
+      position: fixed;
       top: 0;
-      left: -100%;
+      left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.7), transparent);
-      transition: 0.5s;
+      background: radial-gradient(circle at center, #fff 0%, #e0e0e0 80%);
+      overflow: hidden;
+      z-index: -2;
     }
 
-    .enter-btn:hover::before { left: 100%; }
-    .enter-btn:hover {
-      color: #000;
-      background: #ffcc00;
-      box-shadow: 0 0 25px #ffcc00;
-    }
-
-    /* Fade-out transition */
-    .fade-out { animation: fadeOut 1s forwards; }
-    @keyframes fadeOut { 100% { opacity: 0; transform: scale(1.2); } }
-
-    /* Falling popcorns */
-    .popcorn {
+    .light {
       position: absolute;
-      width: 40px;
-      height: 40px;
-      background: url('https://i.ibb.co/bFHyYB8/popcorn.png') no-repeat center/contain;
-      top: -60px;
-      animation: fall linear infinite;
-      z-index: 3;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: moveLight 12s infinite linear;
+      filter: blur(100px);
+    }
+    .light:nth-child(2) {
+      background: radial-gradient(circle, rgba(255, 0, 0, 0.3) 0%, transparent 70%);
+      animation-duration: 15s;
+    }
+    .light:nth-child(3) {
+      background: radial-gradient(circle, rgba(0, 150, 255, 0.3) 0%, transparent 70%);
+      animation-duration: 20s;
+    }
+
+    @keyframes moveLight {
+      0%   { transform: translate(-20%, -20%); }
+      50%  { transform: translate(40%, 40%); }
+      100% { transform: translate(-20%, -20%); }
+    }
+
+    /* ====== Star particles ====== */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: black;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 3s infinite ease-in-out alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.2; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1.5); }
+    }
+
+    /* ====== Spark falling animation ====== */
+    .spark {
+      position: absolute;
+      top: -10px;
+      width: 4px;
+      height: 12px;
+      background: gold;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: fall linear forwards;
+      filter: drop-shadow(0 0 6px gold);
     }
 
     @keyframes fall {
-      0% { transform: translateY(-60px) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+      0%   { transform: translateY(0) scale(0.6); opacity: 1; }
+      80%  { opacity: 1; }
+      100% { transform: translateY(110vh) scale(1); opacity: 0; }
+    }
+
+    /* ====== Landing Page ====== */
+    #landing {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      opacity: 1; /* no fade in delay needed */
+      z-index: 1;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 4rem;
+      color: rgb(0, 0, 0);
+      letter-spacing: 4px;
+       font-family: 'Cinzel', serif;
+      display: flex;
+      gap: 6px;
+    }
+
+    h1 span {
+      display: inline-block;
+    }
+
+    p {
+      margin-top: 20px;
+      font-size: 1.3rem;
+      color: #333;
+    }
+
+    button {
+      margin-top: 40px;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: black;
+      background: gold;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+    }
+
+    button:hover {
+      background: orange;
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(255, 165, 0, 0.9);
+    }
+
+    /* ====== Flying ticket animation ====== */
+    .ticket {
+      position: absolute;
+      width: 80px;
+      height: 40px;
+      background: linear-gradient(135deg, gold, orange);
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+      color: black;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(0deg);
+      opacity: 0.9;
+      animation: flyTicket linear forwards;
+    }
+
+    @keyframes flyTicket {
+      0% { transform: translateY(0) rotate(0deg) scale(0.6); opacity: 1; }
+      50% { transform: translateY(30vh) rotate(180deg) scale(1); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg) scale(0.5); opacity: 0; }
     }
   </style>
 </head>
 <body>
-  <!-- Light Beams -->
-  <div class="beam"></div>
-  <div class="beam"></div>
-  <div class="beam"></div>
 
-  <!-- Content -->
-  <div class="container">
-    <h1>Welcome to CineWorld</h1>
-    <button class="enter-btn" onclick="enterCinema()">Enter Cinema</button>
+  <!-- Background Lights -->
+  <div class="background">
+    <div class="light"></div>
+    <div class="light"></div>
+    <div class="light"></div>
+  </div>
+
+  <!-- Starfield -->
+  <div id="stars"></div>
+
+  <!-- Spark container -->
+  <div id="sparks"></div>
+
+  <!-- Ticket container -->
+  <div id="tickets"></div>
+
+  <!-- Landing Page -->
+  <div id="landing">
+    <h1 id="title"> 
+      CINEMA HUB
+    </h1>
+    <p>Book your tickets in seconds!</p>
+    <button onclick="enterSite()">Enter 🎟️</button>
   </div>
 
   <script>
-    function enterCinema() {
-      document.querySelector(".container").classList.add("fade-out");
-      setTimeout(() => {
-        // Redirect to cinema homepage
-        window.location.href = "cinema.html";
-      }, 1000);
+    function enterSite() {
+      window.location.href = "cinema.html";
     }
 
-    // Falling popcorn generator
-    function createPopcorn() {
-      const popcorn = document.createElement("div");
-      popcorn.classList.add("popcorn");
-      popcorn.style.left = Math.random() * window.innerWidth + "px";
-      popcorn.style.animationDuration = (3 + Math.random() * 3) + "s";
-      document.body.appendChild(popcorn);
-
-      setTimeout(() => { popcorn.remove(); }, 6000);
+    // Generate stars
+    const starContainer = document.getElementById("stars");
+    for (let i = 0; i < 60; i++) {
+      const star = document.createElement("div");
+      star.classList.add("star");
+      star.style.top = Math.random() * window.innerHeight + "px";
+      star.style.left = Math.random() * window.innerWidth + "px";
+      star.style.animationDuration = (2 + Math.random() * 3) + "s";
+      starContainer.appendChild(star);
     }
 
-    setInterval(createPopcorn, 500); // one popcorn every 0.5s
+    // Generate falling sparks
+    const sparkContainer = document.getElementById("sparks");
+    function createSpark() {
+      const spark = document.createElement("div");
+      spark.classList.add("spark");
+      spark.style.left = Math.random() * window.innerWidth + "px";
+      spark.style.width = Math.random() * 3 + 2 + "px";
+      spark.style.height = Math.random() * 15 + 8 + "px";
+      spark.style.animationDuration = (3 + Math.random() * 3) + "s";
+      sparkContainer.appendChild(spark);
+      setTimeout(() => { spark.remove(); }, 6000);
+    }
+    setInterval(createSpark, 150);
+
+    // Generate flying tickets
+    const ticketContainer = document.getElementById("tickets");
+    function createTicket() {
+      const ticket = document.createElement("div");
+      ticket.classList.add("ticket");
+      ticket.textContent = "🎟️";
+      ticket.style.left = Math.random() * window.innerWidth + "px";
+      ticket.style.animationDuration = (3 + Math.random() * 3) + "s";
+      ticketContainer.appendChild(ticket);
+      setTimeout(() => ticket.remove(), 6000);
+    }
+    setInterval(createTicket, 800);
   </script>
+
 </body>
 </html>
-
-
-
