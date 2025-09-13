@@ -425,6 +425,8 @@
         // Remove active from all
         showtimeButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
+        currentShowtime = btn.dataset.time;
+        renderSeats(currentShowtime);
 
         // Reset seat selections (booked remain booked)
         seatInputs.forEach(seat => {
